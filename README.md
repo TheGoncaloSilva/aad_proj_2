@@ -51,8 +51,8 @@ Therefore, to maintain consistent precision, the final result should be expresse
 
 Consider the following situations in Thread launching:
 
-* nº of threads in *BlockThread* < *WarpSize*: The full hardware is not being utilized, because there are inactive **SE????**
-* nº of threads in *BlockThread* = *WarpSize*: All **SE????** are active and being used
+* nº of threads in *BlockThread* < *WarpSize*: The full hardware is not being utilized, because there are inactive computacional elements inside the **SM**
+* nº of threads in *BlockThread* = *WarpSize*: All computacional elements inside the **SM** are active and being used
 * nº of threads in *BlockThread* > *WarpSize*: Threads of *BlockThread* will be divided into multiple **warps**
 
 Example: Consider that the number of Threads in *BlockThread* is 47. How will they be divided and processed? -> **Linearly**
@@ -132,12 +132,14 @@ In a 16 bit **CRC**:
 
 Why does the executions in the GPU exhibit higher variances until the *BlockThread* = *WarpSize*?
 
-* A
-  Why does the execution time stays flat after 32 Threads in *BlockThread*, but at 512 in increases slightly?
-* A
-  Can you interpret the cache misses and their impact in this program?
-* A
-  Implement Stride
+* **Variance until _BlockThread_ = _WarpSize_:** When the number of threads in a block (_BlockThread_) is less than the warp size (_WarpSize_), it can lead to higher variances in execution times. This occurs because threads within a warp execute in lockstep. If the number of threads in a block is not a multiple of the warp size, some warps might not be fully occupied, resulting in under-utilization of available hardware resources within the SM (Streaming Multiprocessor). This under-utilization can cause variations in execution times as some threads may be active while others within the partially filled warps might remain idle.
+
+* **Impact of Thread Load Imbalance:** when _BlockThread_ < _WarpSize_, the hardware may not be fully utilized, leading to some threads experiencing more significant loads while others might have minimal or no load. This load imbalance can result in variations in execution times as the work distribution across threads isn't uniform.
+* **Effect of Grid Size Modification:** Modifying the grid size generally has less impact on execution times' variance compared to block size adjustments. The grid size determines the number of thread blocks that can be scheduled across SMs, and as you rightly noted, it's typically handled by the scheduler. Therefore, variations in grid size might not significantly affect execution times or cause notable variances since it involves the allocation of thread blocks to available SMs without directly influencing thread execution within a block.
+
+Why does the execution time stays flat after 32 Threads in *BlockThread*, but at 512 in increases slightly?
+
+Can you interpret the cache misses and their impact in this program?
 
 ## Extra
 
