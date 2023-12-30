@@ -35,7 +35,6 @@ Therefore, to maintain consistent precision, the final result should be expresse
 
 # About GPU
 
-
 * **Multiple-Instruction Multiple-Data (MIMD)**, offers parallelism for both data and processing. Multiple processors execute instruction streams independently against different data streams
 * **Single-Instruction Multiple-Data (SIMD)**, architecture has a single control processor and instruction memory, so only one instruction can be run at any given point in time. That single instruction is copied and ran across each core at the same time. This is possible because each processor has its own dedicated memory which allows for parallelism at the data-level
 * **Streaming Multiprocessor Instruction Dispatch (SMID)**, is basically a **Pipeline**, with multiple stages, where each perform a specific operation on the data. With this break-down, the a processor ca execute multiple instructions on different (independent) data simultaneously.
@@ -176,3 +175,10 @@ All is well!
                     0.00%     530ns         2     265ns     230ns     300ns  cuDeviceGetUuid
                     0.00%     210ns         1     210ns     210ns     210ns  cudaGetLastError
 ```
+
+### This part was obtained in class
+
+* Inefficient access to memory by multiple threads can occur, due to the fact sequential threads will access non-contiguous memory sections which will result in more memory transactions and more cache thrashing
+* It should be noted that from 64 threads per block (results in 16 blocks) and onward, full GPU occupancy is no longer possible because the GPU used has 24 SMs and because all threads in a block are run on the same SM.
+* Although adjacent threads now access contiguous memory regions, every element of each sequence is now very far from each other, so every time a thread accesses a new sequence element there is a high likelihood of that element not being present in the cache.
+* As the number of threads per block reaches 64 (which results in 16 blocks) and up, the number of blocks is no longer enough for full GPU occupancy given that there are 24 SMs in the GPU used. Even with this factor in play, the execution time suffered very little, because every sequence access requires the values to be fetched from main memory allowing for the SM to run another warp while waiting for the memory transaction to complete thus hiding the memory access latency. This is the main reason for the lack of scalability of the execution time.
