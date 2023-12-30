@@ -62,7 +62,7 @@ Example: Consider that the number of Threads in *BlockThread* is 47. How will th
 
   * 1º Warp is complete with 32 Threads (24 of first row, plus 8 of second)
   * 2º Warp is incomplete, getting the remaing 15 Threads
-    ![[launching_vector.png]]
+    ![](launching_vector.png)
 * Possible question: **What is the position of a Thread in a Warp?**
 
 Threads in a *BlockThread* are executed concurrently in an available **SM**. However the execution of a *BlockThread* in a *GridBlock* is attributed by the scheduller.
